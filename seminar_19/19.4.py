@@ -22,11 +22,26 @@ y_test = an.loc[an['Dataset type'] == 'Validation', 'Class'].to_numpy()
 model = SVC(kernel="linear", class_weight="balanced")
 model.fit(X_train, y_train)
 
-print(balanced_accuracy_score(y_train, model.predict(X_train)))
-print(balanced_accuracy_score(y_test, model.predict(X_test)))
+y_pred = model.predict(X_test)
+M = confusion_matrix(y_test, y_pred)
+TP = M[1, 1]
+TN = M[0, 0]
+FN = M[1, 0]
+FP = M[0, 1]
+TPR = TP / (TP + FN)
+TNR = TN / (TN + FP)
+print(f'TPR: {TPR}\nTNR: {TNR}\n')
+
+plot_roc_curve(model, X_test, y_test)
+plt.plot([0, 1], [0, 1], color="navy", linestyle="--")
+plt.plot(1 - TNR, TPR, "x", c="red")
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('ROC curve')
+plt.savefig("ROC1.png")
+
 genes = ['TRIP13', 'UBE2C', 'ZWINT', 'EPN3', 'KIF4A', 'ECHDC2', 'MTFR1', 'CX3CR1', 'SLC7A5', 'ABAT', 'CFAP69']
 df = df[genes]
-print(df)
 # мы используем True/False из датасета an, чтобы отсортировать датасет df
 X_train = df.loc[an['Dataset type'] == 'Training'].to_numpy() # выборка для обучения модели
 y_train = an.loc[an['Dataset type'] == 'Training', 'Class'].to_numpy()
@@ -35,7 +50,22 @@ X_test = df.loc[an['Dataset type'] == 'Validation'].to_numpy() # выборка 
 y_test = an.loc[an['Dataset type'] == 'Validation', 'Class'].to_numpy()
 model.fit(X_train, y_train)
 
-print(balanced_accuracy_score(y_train, model.predict(X_train)))
-print(balanced_accuracy_score(y_test, model.predict(X_test)))
+y_pred = model.predict(X_test)
 
+M = confusion_matrix(y_test, y_pred)
+TP = M[1, 1]
+TN = M[0, 0]
+FN = M[1, 0]
+FP = M[0, 1]
+TPR = TP / (TP + FN)
+TNR = TN / (TN + FP)
+print(f'TPR: {TPR}\nTNR: {TNR}\n')
+
+plot_roc_curve(model, X_test, y_test)
+plt.plot([0, 1], [0, 1], color="navy", linestyle="--")
+plt.plot(1 - TNR, TPR, "x", c="red")
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('ROC curve')
+plt.savefig("ROC2.png")
 

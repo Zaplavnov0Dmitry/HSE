@@ -10,18 +10,18 @@ from sklearn.ensemble import *
 from sklearn.metrics import *
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import RepeatedStratifiedKFold
-from sklearn.model_selection import train_test_split
+
 
 df = pd.read_csv("BRCA_pam50.tsv", sep="\t", index_col=0)
 X = df.iloc[:, :-1].to_numpy()
 y = df["Subtype"].to_numpy()
 
-model = RandomForestClassifier()
-params = {'max_depth': range(1, 10, 2)}
+model = RandomForestClassifier(class_weight='balanced')
+params = {'max_depth': range(4, 10)}
 model = GridSearchCV(
 	model, params,
 	scoring=make_scorer(balanced_accuracy_score),
-	cv = RepeatedStratifiedKFold(n_repeats=10, random_state=17)
+	cv = RepeatedStratifiedKFold(n_repeats=10),
 )
 model.fit(X, y)
 
